@@ -1,100 +1,96 @@
 # 🕹️ PlayerStatus
 
-Clasă Java ce păstrează starea unui jucător într-un joc, respectând principiile OOP: **incapsulare**, **modularitate**, **reutilizare**, și **ascunderea detaliilor de implementare**.
+A Java class that stores and manages a player's state in a game, following OOP principles: **encapsulation**, **modularity**, **reusability**, and **information hiding**.
 
 ---
 
-## ✅ Scopul proiectului
+## ✅ Project Goal
 
-- Reprezentarea logică a unui jucător și actualizarea stării sale în joc.
-- Respectarea principiilor OOP: vizibilitate corectă, separarea conceptelor, metode clare și reutilizabile.
-
----
-
-## 📦 Stare internă (atribute)
-
-| Atribut        | Tip     | Descriere                                        |
-|----------------|---------|--------------------------------------------------|
-| `nickname`     | String  | Numele jucătorului *(read-only)*                |
-| `score`        | int     | Scorul jucătorului                               |
-| `lives`        | int     | Număr de vieți                                   |
-| `health`       | int     | Sănătatea (0 - 100)                              |
-| `weaponInHand` | String  | Arma curentă                                     |
-| `positionX`    | double  | Poziția pe axa OX                                |
-| `positionY`    | double  | Poziția pe axa OY                                |
-| `gameName`     | String  | Numele jocului *(static - comun tuturor)*        |
+- Represent a player's game state and update it based on game rules.
+- Apply OOP principles: proper visibility, logical separation, clean and reusable methods.
 
 ---
 
-## 🎮 Reguli de joc importante
+## 📦 Internal State (Attributes)
+
+| Attribute       | Type    | Description                                       |
+|------------------|---------|---------------------------------------------------|
+| `nickname`       | String  | Player's name *(read-only)*                      |
+| `score`          | int     | Player's score                                   |
+| `lives`          | int     | Number of lives                                  |
+| `health`         | int     | Health level (0 - 100)                           |
+| `weaponInHand`   | String  | Current weapon                                   |
+| `positionX`      | double  | Position on the X-axis                           |
+| `positionY`      | double  | Position on the Y-axis                           |
+| `gameName`       | String  | Game name *(static - shared by all players)*     |
+
+---
+
+## 🎮 Game Rules
 
 1. **Health**:
-   - Scade până la 0 → se pierde 1 viață, `health` revine la 100.
-   - Dacă `lives` = 0 → Game Over.
-   - `health > 100` → se trunchiază la 100.
+   - Drops to 0 → player loses 1 life, `health` resets to 100.
+   - If `lives` = 0 → Game Over.
+   - `health > 100` → clamped to 100.
 
-2. **Arme (`weaponInHand`)**:
-   - `knife` (1000 puncte), `sniper` (10000 puncte), `kalashnikov` (20000 puncte).
-   - Comparare cu `.equals()`, nu cu `==`.
-   - Poate fi cumpărată doar dacă `score` ≥ costul armei.
+2. **Weapons (`weaponInHand`)**:
+   - `knife` (1000 points), `sniper` (10000 points), `kalashnikov` (20000 points).
+   - Compare using `.equals()`, not `==`.
+   - Can only be purchased if `score` ≥ weapon cost.
 
-3. **Duel între jucători**:
-   - Arme identice: câștigătorul e jucătorul cu scor mai mare, calculat astfel:
+3. **Player duels**:
+   - Same weapons: the winner is the player with the higher calculated power:
      \[
      (3 × health + score ÷ 1000) ÷ 4
      \]
-   - Arme diferite: câștigă jucătorul cu arma mai puternică în funcție de distanță.
+   - Different weapons: the winner depends on weapon strength and distance.
 
-4. **Distanță**:
-   - Se calculează cu formula euclidiană:
+4. **Distance**:
+   - Calculated using the Euclidean formula:
      \[
      \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}
      \]
 
 ---
 
-## ⚙️ Metode necesare
+## ⚙️ Required Methods
 
-### ✅ Inițializare
+### ✅ Initialization
 - `initPlayer(String nickname)`
 - `initPlayer(String nickname, int lives)`
 - `initPlayer(String nickname, int lives, int score)`
 
-### ✨ Artefacte
+### ✨ Artifacts
 - `findArtifact(int artifactCode)`
-  - **Perfect** → +5000 puncte, +1 viață, `health = 100`
-  - **Prim** → +1000 puncte, +2 vieți, `health +25 (max 100)`
-  - **Capcană (divizibil cu 3 și suma cifrelor div. cu 3)** → -3000 puncte, -25 `health`
-  - **Alt cod** → +`artifactCode` puncte
+  - **Perfect** → +5000 points, +1 life, `health = 100`
+  - **Prime** → +1000 points, +2 lives, `health +25` *(max 100)*
+  - **Trap (divisible by 3 and digit sum divisible by 3)** → -3000 points, -25 `health`
+  - **Other codes** → +`artifactCode` points
 
-### 🔫 Arme
-- `setWeaponInHand(String weapon)` – setează arma dacă e validă și scorul permite
-- `getWeaponInHand()` – returnează arma curentă
+### 🔫 Weapons
+- `setWeaponInHand(String weapon)` – sets weapon if valid and score is sufficient
+- `getWeaponInHand()` – returns current weapon
 
-### 📍 Poziționare
-- `movePlayerTo(double x, double y)` – actualizează poziția
+### 📍 Positioning
+- `movePlayerTo(double x, double y)` – updates the player's position
 
-### 🎮 Nume joc
-- `gameName` – trebuie să fie `static`, accesat prin getter & setter
+### 🎮 Game Name
+- `gameName` – should be `static`, accessed via getter & setter
 
-### 🧑‍🚀 Nume jucător
-- `nickname` – `read-only`, doar getter
+### 🧑‍🚀 Player Name
+- `nickname` – read-only, accessible only via getter
 
-### ⚔️ Luptă
-- `shouldAttackOpponent(PlayerStatus opponent)` – întoarce `true` dacă jucătorul actual ar câștiga lupta
-
----
-
-## 🧠 Observații OOP
-
-- `nickname` este `read-only` → doar getter
-- `gameName` este `static`, acces controlat prin getter/setter
-- Calculul distanței trebuie implementat într-o metodă separată
-- Respectă principiile OOP:
-  - Incapsulare (atribute private)
-  - Acces controlat (public methods)
-  - Separare logică și modularitate
+### ⚔️ Combat
+- `shouldAttackOpponent(PlayerStatus opponent)` – returns `true` if the player should attack the opponent
 
 ---
 
+## 🧠 OOP Notes
 
+- `nickname` is read-only → only a getter is provided
+- `gameName` is `static`, accessed through controlled methods
+- Distance is computed in a separate method for modularity
+- Fully adheres to OOP principles:
+  - Encapsulation (private attributes)
+  - Controlled access (public methods)
+  - Logical separation and modular structure
